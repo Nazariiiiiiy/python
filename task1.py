@@ -1,25 +1,41 @@
-full_name = "MIschuk nazariy Yurovych "
-full_name = " ".join(full_name.split()).title()
-print(full_name, len(full_name))
+from pathlib import Path
 
-surname, name, patronymic = full_name.split()
-print(surname[0], surname[-1])
-print(surname[::-1])
-print(surname[0] + name[0] + patronymic[0])
-print(f"{surname} {name[0]}. {patronymic[0]}.")
+script = Path(__file__).resolve()    
+script_dir = script.parent            
 
-count = 0 
-for ch in full_name.lower():
-    if ch in "aeiouy":
-        count += 1
-print(count)
+print("cwd:       ", Path.cwd())     
+print("script:    ", script)
+print("script dir:", script_dir)
+print("home:      ", Path.home())    
 
-group = "IT-32"
-i = group.find("-")
-left = group[:i]
-right = group[i+1:]
-print(left, right, right.isdigit())
 
-login = f"{name[0].lower()}.{surname.lower()}"
-print(login)
-print(f"{login}@fktpb.net.ua")
+for folder in ["data", "reports", "backups"]:
+    (script_dir / folder).mkdir(exist_ok=True)
+
+
+profile = script_dir / "data" / "profile.txt"
+profile.write_text(
+    "name: Nazar\n"
+    "surname: Mischuk\n"
+    "group: IT-32\n"
+    "year: 2007\n"
+    "language: Python\n",
+    encoding="utf-8",
+)
+
+print()
+print("profile path:", profile.resolve())
+print("relative:    ", profile.relative_to(script_dir))
+print("name:        ", profile.name)          
+print("stem:        ", profile.stem)          
+print("suffix:      ", profile.suffix)       
+print("parent:      ", profile.parent.name)   
+print("size:        ", profile.stat().st_size, "bytes")
+
+print()
+print("project tree:")
+for folder in sorted(script_dir.iterdir()):
+    if folder.is_dir():
+        print(f"  {folder.name}/")
+        for f in sorted(folder.iterdir()):
+            print(f"    {f.name}")
