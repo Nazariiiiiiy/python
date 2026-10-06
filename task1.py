@@ -1,25 +1,44 @@
-full_name = "MIschuk nazariy Yurovych "
-full_name = " ".join(full_name.split()).title()
-print(full_name, len(full_name))
 
-surname, name, patronymic = full_name.split()
-print(surname[0], surname[-1])
-print(surname[::-1])
-print(surname[0] + name[0] + patronymic[0])
-print(f"{surname} {name[0]}. {patronymic[0]}.")
+import sys
 
-count = 0 
-for ch in full_name.lower():
-    if ch in "aeiouy":
-        count += 1
-print(count)
+NAME = "Nazariy Mischuk, IT-32"
 
-group = "IT-32"
-i = group.find("-")
-left = group[:i]
-right = group[i+1:]
-print(left, right, right.isdigit())
 
-login = f"{name[0].lower()}.{surname.lower()}"
-print(login)
-print(f"{login}@fktpb.net.ua")
+def inspect(path):
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.read().splitlines()
+    except FileNotFoundError:
+        return False, f"{path}: file not found (FileNotFoundError)"
+    except IsADirectoryError:
+        return False, f"{path}: is a directory (IsADirectoryError)"
+    except PermissionError:
+        return False, f"{path}: permission denied (PermissionError)"
+    except UnicodeDecodeError:
+        return False, f"{path}: not a UTF-8 text file (UnicodeDecodeError)"
+    except OSError as e:
+        return False, f"{path}: {e.strerror} ({type(e).__name__})"
+    if not lines:
+        return False, f"{path}: file is empty (ValueError)"
+    return True, f"{path}: {len(lines)} lines, first: {lines[0]}"
+
+
+def main():
+    print(NAME)
+    paths = sys.argv[1:]
+    if not paths:
+        print("usage: python3 task1.py <path> [<path> ...]", file=sys.stderr)
+        return 2
+    failed = 0
+    for p in paths:
+        ok, msg = inspect(p)
+        if ok:
+            print("ok:    " + msg)
+        else:
+            failed += 1
+            print("error: " + msg, file=sys.stderr)
+    print(f"checked {len(paths)}, failed {failed}")
+    return 1 if failed else 0
+
+
+sys.exit(main())
